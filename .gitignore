@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Model saved
-.h5
+*.h5
