@@ -31,9 +31,9 @@ def predict_image(path, model):
     names = pd.read_csv('../models/classes_names.txt', names=['Names'])
     image_resized = [np.array(Image.open(path).resize((IMAGE_WIDTH, IMAGE_HEIGHT)))]
     prediction_vector = model.predict(np.array(image_resized))
-    predicted_classes = np.argmax(prediction_vector)
+    predicted_classes = np.argmax(prediction_vector, axis=1)[0]
     name_classes = names['Names'][predicted_classes]
-    return name_classes
+    return predicted_classes, name_classes
 
 def load_model(path):
     """Load tf/Keras model for prediction
@@ -47,7 +47,7 @@ model.summary()
 st.title("Identifation d'avion")
 
 uploaded_files = st.file_uploader("Charger une image d'avion") #, accept_multiple_files=True)
-st.write(uploaded_files)
+# st.write(uploaded_files)
 
 if uploaded_files:
     loaded_image = load_image(uploaded_files)
@@ -55,7 +55,7 @@ if uploaded_files:
     
 predict_btn = st.button('Identifier', disabled=(uploaded_files is None))
 if predict_btn:
-    prediction = predict_image(uploaded_files, model)
-    st.write(f"C'est un: {prediction}")
+    prediction_classes, prediction_names = predict_image(uploaded_files, model)
+    st.write(f"C'est un: {prediction_names}\nDe classes:{prediction_classes}")
     # Exemple si les f-strings ne sont pas dispo.
     # st.write("C'est un: {}".format(prediction))
